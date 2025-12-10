@@ -13,6 +13,17 @@ return new class extends Migration
     {
         Schema::create('communications', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('title');
+            $table->text('body');
+            $table->string('channel')->default('email');
+            $table->string('audience')->nullable();
+            $table->dateTime('scheduled_at')->nullable();
+            $table->dateTime('sent_at')->nullable();
+            $table->string('status')->default('draft');
+            $table->unsignedInteger('sent_count')->default(0);
+            $table->unsignedInteger('opened_count')->default(0);
+            $table->unsignedInteger('clicked_count')->default(0);
             $table->timestamps();
         });
     }

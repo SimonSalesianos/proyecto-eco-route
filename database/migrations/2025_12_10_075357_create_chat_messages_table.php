@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('chat_messages', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('challenge_id')->nullable()->constrained('challenges')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->text('content');
+            $table->boolean('is_flagged')->default(false);
+            $table->boolean('is_deleted')->default(false);
+            $table->text('moderation_notes')->nullable();
+            $table->unsignedInteger('likes_count')->default(0);
+            $table->unsignedInteger('reports_count')->default(0);
             $table->timestamps();
         });
     }
