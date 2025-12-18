@@ -12,7 +12,7 @@ class CommunicationController extends Controller
      */
     public function index()
     {
-        //
+        return Communication::all();
     }
 
     /**
@@ -20,7 +20,7 @@ class CommunicationController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -28,7 +28,18 @@ class CommunicationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+            'channel' => 'string|in:email,sms,push,in-app',
+            'audience' => 'nullable|string|max:255',
+            'scheduled_at' => 'nullable|datetime',
+            'sent_at' => 'nullable|datetime',
+            'status' => 'string|in:draft,scheduled,sent,failed',
+        ]);
+
+        return Communication::create($validated);
     }
 
     /**
@@ -36,7 +47,7 @@ class CommunicationController extends Controller
      */
     public function show(Communication $communication)
     {
-        //
+        return $communication;
     }
 
     /**
@@ -52,7 +63,22 @@ class CommunicationController extends Controller
      */
     public function update(Request $request, Communication $communication)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'exists:users,id',
+            'title' => 'string|max:255',
+            'body' => 'string',
+            'channel' => 'string|in:email,sms,push,in-app',
+            'audience' => 'nullable|string|max:255',
+            'scheduled_at' => 'nullable|datetime',
+            'sent_at' => 'nullable|datetime',
+            'status' => 'string|in:draft,scheduled,sent,failed',
+            'sent_count' => 'integer|min:0',
+            'opened_count' => 'integer|min:0',
+            'clicked_count' => 'integer|min:0',
+        ]);
+
+        $communication->update($validated);
+        return $communication;
     }
 
     /**
@@ -60,6 +86,7 @@ class CommunicationController extends Controller
      */
     public function destroy(Communication $communication)
     {
-        //
+        $communication->delete();
+        return response()->json(null, 204);
     }
 }

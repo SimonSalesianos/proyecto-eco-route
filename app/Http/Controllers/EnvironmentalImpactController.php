@@ -12,7 +12,7 @@ class EnvironmentalImpactController extends Controller
      */
     public function index()
     {
-        //
+        return EnvironmentalImpact::all();
     }
 
     /**
@@ -28,7 +28,21 @@ class EnvironmentalImpactController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'scope' => 'string|in:daily,monthly,yearly',
+            'year' => 'nullable|integer|min:2000',
+            'month' => 'nullable|integer|min:1|max:12',
+            'co2_emitted' => 'nullable|numeric|min:0',
+            'co2_saved' => 'nullable|numeric|min:0',
+            'distance_sustainable' => 'nullable|numeric|min:0',
+            'trips_sustainable' => 'integer|min:0',
+            'sustainable_share' => 'nullable|numeric|min:0|max:100',
+            'is_final' => 'boolean',
+            'notes' => 'nullable|string',
+        ]);
+
+        return EnvironmentalImpact::create($validated);
     }
 
     /**
@@ -36,7 +50,7 @@ class EnvironmentalImpactController extends Controller
      */
     public function show(EnvironmentalImpact $environmentalImpact)
     {
-        //
+        return $environmentalImpact;
     }
 
     /**
@@ -52,7 +66,22 @@ class EnvironmentalImpactController extends Controller
      */
     public function update(Request $request, EnvironmentalImpact $environmentalImpact)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'exists:users,id',
+            'scope' => 'string|in:daily,monthly,yearly',
+            'year' => 'nullable|integer|min:2000',
+            'month' => 'nullable|integer|min:1|max:12',
+            'co2_emitted' => 'nullable|numeric|min:0',
+            'co2_saved' => 'nullable|numeric|min:0',
+            'distance_sustainable' => 'nullable|numeric|min:0',
+            'trips_sustainable' => 'integer|min:0',
+            'sustainable_share' => 'nullable|numeric|min:0|max:100',
+            'is_final' => 'boolean',
+            'notes' => 'nullable|string',
+        ]);
+
+        $environmentalImpact->update($validated);
+        return $environmentalImpact;
     }
 
     /**
@@ -60,6 +89,7 @@ class EnvironmentalImpactController extends Controller
      */
     public function destroy(EnvironmentalImpact $environmentalImpact)
     {
-        //
+        $environmentalImpact->delete();
+        return response()->json(null, 204);
     }
 }

@@ -12,7 +12,7 @@ class RewardController extends Controller
      */
     public function index()
     {
-        //
+        return Reward::all();
     }
 
     /**
@@ -28,7 +28,20 @@ class RewardController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'challenge_id' => 'nullable|exists:challenges,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'partner' => 'nullable|string|max:255',
+            'points_cost' => 'integer|min:0',
+            'stock' => 'nullable|integer|min:0',
+            'is_active' => 'boolean',
+            'estimated_value' => 'nullable|numeric|min:0',
+            'valid_from' => 'nullable|date',
+            'valid_until' => 'nullable|date',
+        ]);
+
+        return Reward::create($validated);
     }
 
     /**
@@ -36,7 +49,7 @@ class RewardController extends Controller
      */
     public function show(Reward $reward)
     {
-        //
+        return $reward;
     }
 
     /**
@@ -52,7 +65,21 @@ class RewardController extends Controller
      */
     public function update(Request $request, Reward $reward)
     {
-        //
+        $validated = $request->validate([
+            'challenge_id' => 'nullable|exists:challenges,id',
+            'name' => 'string|max:255',
+            'description' => 'nullable|string',
+            'partner' => 'nullable|string|max:255',
+            'points_cost' => 'integer|min:0',
+            'stock' => 'nullable|integer|min:0',
+            'is_active' => 'boolean',
+            'estimated_value' => 'nullable|numeric|min:0',
+            'valid_from' => 'nullable|date',
+            'valid_until' => 'nullable|date',
+        ]);
+
+        $reward->update($validated);
+        return $reward;
     }
 
     /**
@@ -60,6 +87,7 @@ class RewardController extends Controller
      */
     public function destroy(Reward $reward)
     {
-        //
+        $reward->delete();
+        return response()->json(null, 204);
     }
 }

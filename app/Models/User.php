@@ -22,28 +22,51 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'role',
         ];
-    }
-}
+
+        /**
+         * The attributes that should be hidden for serialization.
+         *
+         * @var list<string>
+         */
+        protected $hidden = [
+            'password',
+            'remember_token',
+        ];
+
+        /**
+         * Get the attributes that should be cast.
+         *
+         * @return array<string, string>
+         */
+        protected function casts(): array
+        {
+            return [
+                'email_verified_at' => 'datetime',
+                'password' => 'hashed',
+            ];
+        }
+
+        /**
+         * Get the environmental impacts for the user.
+         */
+        public function environmentalImpacts()
+        {
+            return $this->hasMany(EnvironmentalImpact::class);
+        }
+
+        /**
+         * Get the chat messages posted by the user.
+         */
+        public function chatMessages()
+        {
+            return $this->hasMany(ChatMessage::class);
+        }
+
+        /**
+         * Get the communications created by the user.
+         */
+        public function communications()
+        {
+            return $this->hasMany(Communication::class);
