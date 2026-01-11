@@ -7,25 +7,11 @@ use Illuminate\Http\Request;
 
 class ChallengeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return Challenge::all();
+        return response()->json(Challenge::all(), 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -33,36 +19,23 @@ class ChallengeController extends Controller
             'description' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
-            'difficulty' => 'integer|min:1|max:5',
-            'points_reward' => 'integer|min:0',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'difficulty' => 'required|integer|min:1|max:5',
+            'points_reward' => 'required|integer|min:0',
             'co2_saving_estimate' => 'nullable|numeric|min:0',
             'target_participants' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
         ]);
 
-        return Challenge::create($validated);
+        $challenge = Challenge::create($validated);
+        return response()->json($challenge, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Challenge $challenge)
     {
-        return $challenge;
+        return response()->json($challenge, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Challenge $challenge)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Challenge $challenge)
     {
         $validated = $request->validate([
@@ -70,7 +43,7 @@ class ChallengeController extends Controller
             'description' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
             'difficulty' => 'integer|min:1|max:5',
             'points_reward' => 'integer|min:0',
             'co2_saving_estimate' => 'nullable|numeric|min:0',
@@ -79,15 +52,12 @@ class ChallengeController extends Controller
         ]);
 
         $challenge->update($validated);
-        return $challenge;
+        return response()->json($challenge, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Challenge $challenge)
     {
         $challenge->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Challenge deleted successfully'], 200);
     }
 }

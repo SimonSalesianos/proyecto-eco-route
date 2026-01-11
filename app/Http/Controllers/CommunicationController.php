@@ -7,60 +7,33 @@ use Illuminate\Http\Request;
 
 class CommunicationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return Communication::all();
+        return response()->json(Communication::all(), 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'channel' => 'string|in:email,sms,push,in-app',
+            'channel' => 'required|string|in:email,sms,push,in-app',
             'audience' => 'nullable|string|max:255',
-            'scheduled_at' => 'nullable|datetime',
-            'sent_at' => 'nullable|datetime',
-            'status' => 'string|in:draft,scheduled,sent,failed',
+            'scheduled_at' => 'nullable|date',
+            'sent_at' => 'nullable|date',
+            'status' => 'required|string|in:draft,scheduled,sent,failed',
         ]);
 
-        return Communication::create($validated);
+        $communication = Communication::create($validated);
+        return response()->json($communication, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Communication $communication)
     {
-        return $communication;
+        return response()->json($communication, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Communication $communication)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Communication $communication)
     {
         $validated = $request->validate([
@@ -69,8 +42,8 @@ class CommunicationController extends Controller
             'body' => 'string',
             'channel' => 'string|in:email,sms,push,in-app',
             'audience' => 'nullable|string|max:255',
-            'scheduled_at' => 'nullable|datetime',
-            'sent_at' => 'nullable|datetime',
+            'scheduled_at' => 'nullable|date',
+            'sent_at' => 'nullable|date',
             'status' => 'string|in:draft,scheduled,sent,failed',
             'sent_count' => 'integer|min:0',
             'opened_count' => 'integer|min:0',
@@ -78,15 +51,12 @@ class CommunicationController extends Controller
         ]);
 
         $communication->update($validated);
-        return $communication;
+        return response()->json($communication, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Communication $communication)
     {
         $communication->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Communication deleted successfully'], 200);
     }
 }

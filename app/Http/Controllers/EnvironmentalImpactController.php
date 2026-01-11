@@ -7,63 +7,36 @@ use Illuminate\Http\Request;
 
 class EnvironmentalImpactController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return EnvironmentalImpact::all();
+        return response()->json(EnvironmentalImpact::all(), 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'scope' => 'string|in:daily,monthly,yearly',
+            'scope' => 'required|string|in:daily,monthly,yearly',
             'year' => 'nullable|integer|min:2000',
             'month' => 'nullable|integer|min:1|max:12',
             'co2_emitted' => 'nullable|numeric|min:0',
             'co2_saved' => 'nullable|numeric|min:0',
             'distance_sustainable' => 'nullable|numeric|min:0',
-            'trips_sustainable' => 'integer|min:0',
+            'trips_sustainable' => 'required|integer|min:0',
             'sustainable_share' => 'nullable|numeric|min:0|max:100',
             'is_final' => 'boolean',
             'notes' => 'nullable|string',
         ]);
 
-        return EnvironmentalImpact::create($validated);
+        $environmentalImpact = EnvironmentalImpact::create($validated);
+        return response()->json($environmentalImpact, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(EnvironmentalImpact $environmentalImpact)
     {
-        return $environmentalImpact;
+        return response()->json($environmentalImpact, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EnvironmentalImpact $environmentalImpact)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, EnvironmentalImpact $environmentalImpact)
     {
         $validated = $request->validate([
@@ -81,15 +54,12 @@ class EnvironmentalImpactController extends Controller
         ]);
 
         $environmentalImpact->update($validated);
-        return $environmentalImpact;
+        return response()->json($environmentalImpact, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(EnvironmentalImpact $environmentalImpact)
     {
         $environmentalImpact->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Environmental impact deleted successfully'], 200);
     }
 }

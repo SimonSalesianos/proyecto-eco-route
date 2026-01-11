@@ -7,25 +7,11 @@ use Illuminate\Http\Request;
 
 class RewardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return Reward::all();
+        return response()->json(Reward::all(), 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -33,36 +19,23 @@ class RewardController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'partner' => 'nullable|string|max:255',
-            'points_cost' => 'integer|min:0',
+            'points_cost' => 'required|integer|min:0',
             'stock' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
             'estimated_value' => 'nullable|numeric|min:0',
             'valid_from' => 'nullable|date',
-            'valid_until' => 'nullable|date',
+            'valid_until' => 'nullable|date|after_or_equal:valid_from',
         ]);
 
-        return Reward::create($validated);
+        $reward = Reward::create($validated);
+        return response()->json($reward, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Reward $reward)
     {
-        return $reward;
+        return response()->json($reward, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Reward $reward)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Reward $reward)
     {
         $validated = $request->validate([
@@ -75,19 +48,16 @@ class RewardController extends Controller
             'is_active' => 'boolean',
             'estimated_value' => 'nullable|numeric|min:0',
             'valid_from' => 'nullable|date',
-            'valid_until' => 'nullable|date',
+            'valid_until' => 'nullable|date|after_or_equal:valid_from',
         ]);
 
         $reward->update($validated);
-        return $reward;
+        return response()->json($reward, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Reward $reward)
     {
         $reward->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Reward deleted successfully'], 200);
     }
 }

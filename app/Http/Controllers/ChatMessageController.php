@@ -7,25 +7,11 @@ use Illuminate\Http\Request;
 
 class ChatMessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return ChatMessage::all();
+        return response()->json(ChatMessage::all(), 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -37,28 +23,15 @@ class ChatMessageController extends Controller
             'moderation_notes' => 'nullable|string',
         ]);
 
-        return ChatMessage::create($validated);
+        $chatMessage = ChatMessage::create($validated);
+        return response()->json($chatMessage, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(ChatMessage $chatMessage)
     {
-        return $chatMessage;
+        return response()->json($chatMessage, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ChatMessage $chatMessage)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, ChatMessage $chatMessage)
     {
         $validated = $request->validate([
@@ -73,15 +46,12 @@ class ChatMessageController extends Controller
         ]);
 
         $chatMessage->update($validated);
-        return $chatMessage;
+        return response()->json($chatMessage, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(ChatMessage $chatMessage)
     {
         $chatMessage->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Chat message deleted successfully'], 200);
     }
 }
