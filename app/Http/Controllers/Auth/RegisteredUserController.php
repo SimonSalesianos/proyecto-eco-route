@@ -21,15 +21,19 @@ class RegisteredUserController extends Controller
     public function store(Request $request): Response
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => Hash::make($request->string('password')),
+            'role'      => 'user',
+            'points'    => 0,
+            'co2_saved' => 0,
+            'is_active' => true,
         ]);
 
         event(new Registered($user));
@@ -37,6 +41,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         $token = $user->createToken('api')->plainTextToken;
+
         return response([
             'token' => $token,
             'user'  => $user,
