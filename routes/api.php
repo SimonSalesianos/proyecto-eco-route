@@ -19,21 +19,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user/current', function (Request $request) {
         $user = $request->user();
-
         return response()->json([
-            'id'         => $user->id,
-            'full_name'  => $user->name,
-            'email'      => $user->email,
+            'id'        => $user->id,
+            'full_name' => $user->name,
+            'email'     => $user->email,
         ]);
     });
 
     Route::get('/stats/current', function (Request $request) {
         $user = $request->user();
-
         return response()->json([
-            'total_routes'        => 0,
-            'total_co2_saved_kg'  => (float) ($user->co2_saved ?? 0.0),
-            'total_achievements'  => 0,
+            'total_routes'       => 0,
+            'total_co2_saved_kg' => (float) ($user->co2_saved ?? 0.0),
+            'total_achievements' => 0,
         ]);
     });
 
@@ -44,56 +42,68 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/challenges/active', function () {
         $challenges = \App\Models\Challenge::where('is_active', true)->get();
-
         return response()->json(
             $challenges->map(function ($c) {
                 return [
-                    'id'                => (string) $c->id,
-                    'title'             => $c->title,
-                    'description'       => $c->description ?? '',
-                    'difficulty'        => match ((int) ($c->difficulty ?? 1)) {
+                    'id'               => (string) $c->id,
+                    'title'            => $c->title,
+                    'description'      => $c->description ?? '',
+                    'difficulty'       => match ((int) ($c->difficulty ?? 1)) {
                         1       => 'easy',
                         2       => 'medium',
                         default => 'hard',
                     },
-                    'remaining_days'    => 0,
-                    'progress_current'  => 0,
-                    'progress_total'    => $c->target_participants ?? 100,
-                    'reward_points'     => $c->points_reward ?? 0,
+                    'remaining_days'   => 0,
+                    'progress_current' => 0,
+                    'progress_total'   => $c->target_participants ?? 100,
+                    'reward_points'    => $c->points_reward ?? 0,
                 ];
             })
         );
     });
 
     Route::get('/chat/messages', function (Request $request) {
-        $messages = \App\Models\ChatMessage::orderBy('created_at', 'asc')->get();
-        $userId   = $request->user()->id;
+        $messages = \App\Models\ChatMessage::with('user')  
+            ->orderBy('created_at', 'asc')
+            ->get();
+        $userId = $request->user()->id;
 
         return response()->json(
             $messages->map(function ($m) use ($userId) {
                 $name = $m->user->name ?? 'Usuario';
-
                 return [
-                    'id'               => (string) $m->id,
-                    'author_name'      => $name,
-                    'author_initials'  => strtoupper(substr($name, 0, 2)),
-                    'text'             => $m->message ?? '',
-                    'created_at'       => $m->created_at,
-                    'is_mine'          => $m->user_id === $userId,
+                    'id'              => (string) $m->id,
+                    'author_name'     => $name,
+                    'author_initials' => strtoupper(substr($name, 0, 2)),
+                    'text'            => $m->content ?? '',  
+                    'created_at'      => $m->created_at,
+                    'is_mine'         => $m->user_id === $userId,
                 ];
             })
         );
     });
 
     Route::post('/chat/messages', function (Request $request) {
-        $user    = $request->user();
-
-        $message = \App\Models\ChatMessage::create([
-            'user_id' => $user->id,
-            'message' => $request->input('text'),
+        $request->validate([
+            'content' => 'required|string|max:1000',
         ]);
 
-        return response()->json($message, 201);
+        $message = \App\Models\ChatMessage::create([
+            'user_id' => $request->user()->id,  
+            'content' => $request->input('content'),
+        ]);
+
+        $message->load('user');
+        $name = $message->user->name ?? 'Usuario';
+
+        return response()->json([
+            'id'              => (string) $message->id,
+            'author_name'     => $name,
+            'author_initials' => strtoupper(substr($name, 0, 2)),
+            'text'            => $message->content,
+            'created_at'      => $message->created_at,
+            'is_mine'         => true,
+        ], 201);
     });
 
     Route::apiResource('users',                 UserController::class);

@@ -6,15 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Challenge extends Model
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'title',
         'description',
         'category',
+        'city',           // ← nuevo
         'start_date',
         'end_date',
         'difficulty',
@@ -25,34 +21,24 @@ class Challenge extends Model
         'is_active',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'start_date' => 'date',
-            'end_date' => 'date',
+            'start_date'          => 'date',
+            'end_date'            => 'date',
             'co2_saving_estimate' => 'decimal:2',
-            'is_active' => 'boolean',
+            'is_active'           => 'boolean',
         ];
     }
 
-    /**
-     * Get the rewards for the challenge.
-     */
     public function rewards()
     {
         return $this->hasMany(Reward::class);
     }
 
-    /**
-     * Get the chat messages for the challenge.
-     */
     public function chatMessages()
     {
         return $this->hasMany(ChatMessage::class);
     }
 }
+    
