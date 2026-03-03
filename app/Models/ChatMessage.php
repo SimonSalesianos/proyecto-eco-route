@@ -9,7 +9,7 @@ class ChatMessage extends Model
     protected $fillable = [
         'challenge_id',
         'user_id',
-        'content',      // ← el campo real es 'content'
+        'content',      
         'is_flagged',
         'is_deleted',
         'moderation_notes',

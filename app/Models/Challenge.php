@@ -10,7 +10,7 @@ class Challenge extends Model
         'title',
         'description',
         'category',
-        'city',           // ← nuevo
+        'city',           
         'start_date',
         'end_date',
         'difficulty',
