@@ -8,12 +8,13 @@ use App\Http\Controllers\EnvironmentalImpactController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+Route::post('/login',    [AuthenticatedSessionController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -63,7 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/chat/messages', function (Request $request) {
-        $messages = \App\Models\ChatMessage::with('user')  
+        $messages = \App\Models\ChatMessage::with('user')
             ->orderBy('created_at', 'asc')
             ->get();
         $userId = $request->user()->id;
@@ -75,7 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
                     'id'              => (string) $m->id,
                     'author_name'     => $name,
                     'author_initials' => strtoupper(substr($name, 0, 2)),
-                    'text'            => $m->content ?? '',  
+                    'text'            => $m->content ?? '',
                     'created_at'      => $m->created_at,
                     'is_mine'         => $m->user_id === $userId,
                 ];
@@ -89,7 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
 
         $message = \App\Models\ChatMessage::create([
-            'user_id' => $request->user()->id,  
+            'user_id' => $request->user()->id,
             'content' => $request->input('content'),
         ]);
 
@@ -106,12 +107,18 @@ Route::middleware('auth:sanctum')->group(function () {
         ], 201);
     });
 
+    // ── Resources ─────────────────────────────────────────────
     Route::apiResource('users',                 UserController::class);
     Route::apiResource('challenges',            ChallengeController::class);
     Route::apiResource('rewards',               RewardController::class);
     Route::apiResource('environmental-impacts', EnvironmentalImpactController::class);
     Route::apiResource('chat-messages',         ChatMessageController::class);
     Route::apiResource('communications',        CommunicationController::class);
+
+    // ✅ Notificaciones
+    Route::patch('notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
+    Route::apiResource('notifications',         NotificationController::class);
+
 });
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
