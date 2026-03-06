@@ -26,7 +26,6 @@ class DatabaseSeeder extends Seeder
         DB::table('routes')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // ── Usuarios ──────────────────────────────────────────
         $admin = User::create([
             'name'      => 'Admin EcoRoute',
             'email'     => 'admin@ecoroute.com',
@@ -60,7 +59,6 @@ class DatabaseSeeder extends Seeder
         ]);
         dump('Usuario carlos creado: ID ' . $carlos->id);
 
-        // ── Challenges ────────────────────────────────────────
         Challenge::create([
             'title'               => 'Reto Bici Semanal',
             'description'         => 'Usa la bicicleta durante 5 días seguidos',
@@ -84,7 +82,6 @@ class DatabaseSeeder extends Seeder
         ]);
         dump('Challenges creados');
 
-        // ── Rewards ───────────────────────────────────────────
         Reward::create([
             'name'            => 'Descuento Decathlon 10%',
             'description'     => 'Descuento en accesorios de ciclismo',
@@ -122,7 +119,6 @@ class DatabaseSeeder extends Seeder
         ]);
         dump('Rewards creadas');
 
-        // ── Environmental Impacts ─────────────────────────────
         EnvironmentalImpact::create([
             'user_id'              => $admin->id,
             'scope'                => 'monthly',
@@ -168,7 +164,6 @@ class DatabaseSeeder extends Seeder
         ]);
         dump('EnvironmentalImpact carlos creado');
 
-        // ── Communications ────────────────────────────────────
         Communication::create([
             'user_id'       => $admin->id,
             'title'         => 'Bienvenida a EcoRoute',
@@ -198,7 +193,6 @@ class DatabaseSeeder extends Seeder
         ]);
         dump('Communications creadas');
 
-        // ── Notifications ─────────────────────────────────────
         Notification::create([
             'user_id'  => $admin->id,
             'title'    => 'Bienvenido al sistema',
@@ -254,7 +248,6 @@ class DatabaseSeeder extends Seeder
         ]);
         dump('Notifications creadas');
 
-        // ── Rutas ─────────────────────────────────────────────
         DB::table('routes')->insert([
             [
                 'name'             => 'Ruta del Río Verde',

@@ -107,7 +107,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ], 201);
     });
 
-    // ── Resources ─────────────────────────────────────────────
     Route::apiResource('users',                 UserController::class);
     Route::apiResource('challenges',            ChallengeController::class);
     Route::apiResource('rewards',               RewardController::class);
@@ -115,7 +114,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('chat-messages',         ChatMessageController::class);
     Route::apiResource('communications',        CommunicationController::class);
 
-    // ✅ Notificaciones
     Route::patch('notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
     Route::apiResource('notifications',         NotificationController::class);
 

@@ -18,7 +18,7 @@ class ChallengeController extends Controller
             'title'               => 'required|string|max:255',
             'description'         => 'nullable|string',
             'category'            => 'nullable|string|max:100',
-            'city'                => 'nullable|string|max:100', // ← nuevo
+            'city'                => 'nullable|string|max:100', 
             'start_date'          => 'nullable|date',
             'end_date'            => 'nullable|date|after_or_equal:start_date',
             'difficulty'          => 'required|integer|min:1|max:5',
@@ -43,7 +43,7 @@ class ChallengeController extends Controller
             'title'               => 'string|max:255',
             'description'         => 'nullable|string',
             'category'            => 'nullable|string|max:100',
-            'city'                => 'nullable|string|max:100', // ← nuevo
+            'city'                => 'nullable|string|max:100', 
             'start_date'          => 'nullable|date',
             'end_date'            => 'nullable|date|after_or_equal:start_date',
             'difficulty'          => 'integer|min:1|max:5',
